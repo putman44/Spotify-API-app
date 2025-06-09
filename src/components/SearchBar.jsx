@@ -1,14 +1,19 @@
-export default function SearchBar({ setSearchTerm }) {
+import { useState } from "react";
+
+export default function SearchBar({ handleSearch }) {
+  const [inputValue, setInputValue] = useState("");
+
   const handleSubmit = (event) => {
     event.preventDefault();
-    // Optionally do something with the searchTerm, e.g., trigger a search
+    handleSearch(inputValue); // Call parent-provided handler
   };
 
   return (
     <div className="search-bar">
       <form onSubmit={handleSubmit}>
         <input
-          onChange={() => setSearchTerm(e.target.value)}
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
           type="text"
           placeholder="Search for songs, artists, or albums..."
         />
