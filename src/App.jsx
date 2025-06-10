@@ -11,17 +11,22 @@ import {
 } from "./utils/spofityApi";
 import { spotifyAuth, getTokenFromCode } from "./utils/spotifyAuth";
 
+// Main App component for the Spotify Playlist app
 function App() {
+  // State for search results from Spotify
   const [searchResults, setSearchResults] = useState([]);
+  // State for the user's playlist (array of tracks)
   const [playlist, setPlaylist] = useState([]);
+  // State for the Spotify access token
   const [token, setToken] = useState(null);
 
-  // On app load, check if code present and get token
+  // On app load, check if code is present in URL and get token if needed
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const code = urlParams.get("code");
 
     if (code && !token) {
+      // If redirected from Spotify with a code, exchange it for a token
       getTokenFromCode().then(() => {
         const accessToken = localStorage.getItem("access_token");
         setToken(accessToken);
@@ -29,6 +34,7 @@ function App() {
         window.history.replaceState({}, document.title, "/");
       });
     } else {
+      // If already authenticated, get token from localStorage
       const accessToken = localStorage.getItem("access_token");
       if (accessToken) {
         setToken(accessToken);
@@ -36,17 +42,19 @@ function App() {
     }
   }, [token]);
 
+  // Handle search bar submission
   const handleSearch = async (term) => {
     if (!token) {
       // No token, start login flow
       spotifyAuth();
       return;
     }
-
+    // Search Spotify for tracks
     const results = await searchSpotify(term, token);
     setSearchResults(results);
   };
 
+  // Add a track to the playlist by ID
   const handleAddToPlaylist = (trackId) => {
     const track = searchResults.find((item) => item.id === trackId);
     if (track && !playlist.some((item) => item.id === trackId)) {
@@ -54,32 +62,30 @@ function App() {
     }
   };
 
+  // Remove a track from the playlist by ID
   const removeTrackFromPlaylist = (trackId) => {
     setPlaylist(playlist.filter((item) => item.id !== trackId));
   };
 
+  // Save the playlist to the user's Spotify account
   const handleSavePlaylist = async (playlistName) => {
     const accessToken = localStorage.getItem("access_token");
     if (!accessToken) {
       alert("You must be logged in with Spotify first.");
       return;
     }
-
     try {
       // Step 1: Get current user's Spotify ID
       const user = await getCurrentUser(accessToken);
-
       // Step 2: Create the playlist
       const newPlaylist = await createPlaylist(
         user.id,
         playlistName,
         accessToken
       );
-
       // Step 3: Add tracks to the playlist
       const uris = playlist.map((track) => track.uri); // Make sure `track.uri` exists
       await addTracksToPlaylist(newPlaylist.id, uris, accessToken);
-
       alert("Playlist saved to Spotify!");
     } catch (err) {
       console.error("Failed to save playlist:", err);
@@ -89,12 +95,15 @@ function App() {
 
   return (
     <div className="App">
+      {/* Search bar for user input */}
       <SearchBar handleSearch={handleSearch} />
       <main>
+        {/* Search results list */}
         <SearchResults
           handleAddToPlaylist={handleAddToPlaylist}
           filteredResults={searchResults}
         />
+        {/* Playlist display and save button */}
         <Playlist
           handleSavePlaylist={handleSavePlaylist}
           removeTrackFromPlaylist={removeTrackFromPlaylist}
