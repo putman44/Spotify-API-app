@@ -1,28 +1,46 @@
-import { useState } from "react";
-
+import { useState, useEffect } from "react";
 import "./App.css";
 import SearchBar from "./components/SearchBar";
 import SearchResults from "./components/SearchResults";
 import Playlist from "./components/Playlist";
-
-const DATA = [
-  { id: 1, name: "Song 1", artist: "Artist 1", album: "Album 1" },
-  { id: 2, name: "Song 2", artist: "jame 2", album: "jame 2" },
-  { id: 3, name: "Song 3", artist: "spitfire 3", album: "spitfire 3" },
-];
+import { searchSpotify } from "./utils/spofityApi";
+import { spotifyAuth, getTokenFromCode } from "./utils/spotifyAuth";
 
 function App() {
   const [searchResults, setSearchResults] = useState([]);
   const [playlist, setPlaylist] = useState([]);
+  const [token, setToken] = useState(null);
 
-  const handleSearch = (term) => {
-    const filtered = DATA.filter(
-      (item) =>
-        item.name.toLowerCase().includes(term.toLowerCase()) ||
-        item.artist.toLowerCase().includes(term.toLowerCase()) ||
-        item.album.toLowerCase().includes(term.toLowerCase())
-    );
-    setSearchResults(filtered);
+  // On app load, check if code present and get token
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get("code");
+
+    if (code && !token) {
+      getTokenFromCode().then(() => {
+        const accessToken = localStorage.getItem("access_token");
+        setToken(accessToken);
+        // Clean the URL so code param disappears
+        window.history.replaceState({}, document.title, "/");
+      });
+    } else {
+      const accessToken = localStorage.getItem("access_token");
+      if (accessToken) {
+        setToken(accessToken);
+      }
+    }
+  }, [token]);
+
+  const handleSearch = async (term) => {
+    if (!token) {
+      // No token, start login flow
+      spotifyAuth();
+      return;
+    }
+
+    const results = await searchSpotify(term, token);
+    setSearchResults(results);
+    console.log("Search results:", results);
   };
 
   const handleAddToPlaylist = (trackId) => {
