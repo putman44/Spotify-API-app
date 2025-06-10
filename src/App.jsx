@@ -3,6 +3,7 @@ import { useState } from "react";
 import "./App.css";
 import SearchBar from "./components/SearchBar";
 import SearchResults from "./components/SearchResults";
+import Playlist from "./components/Playlist";
 
 const DATA = [
   { id: 1, name: "Song 1", artist: "Artist 1", album: "Album 1" },
@@ -12,6 +13,7 @@ const DATA = [
 
 function App() {
   const [searchResults, setSearchResults] = useState([]);
+  const [playlist, setPlaylist] = useState([]);
 
   const handleSearch = (term) => {
     const filtered = DATA.filter(
@@ -23,12 +25,30 @@ function App() {
     setSearchResults(filtered);
   };
 
-  console.log("Search Results:", searchResults);
+  const handleAddToPlaylist = (trackId) => {
+    const track = searchResults.find((item) => item.id === trackId);
+    if (track && !playlist.some((item) => item.id === trackId)) {
+      setPlaylist([...playlist, track]);
+    }
+  };
+
+  const removeTrackFromPlaylist = (trackId) => {
+    setPlaylist(playlist.filter((item) => item.id !== trackId));
+  };
 
   return (
     <div className="App">
       <SearchBar handleSearch={handleSearch} />
-      <SearchResults results={searchResults} />
+      <main>
+        <SearchResults
+          handleAddToPlaylist={handleAddToPlaylist}
+          filteredResults={searchResults}
+        />
+        <Playlist
+          removeTrackFromPlaylist={removeTrackFromPlaylist}
+          playlist={playlist}
+        />
+      </main>
     </div>
   );
 }
