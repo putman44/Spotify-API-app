@@ -1,0 +1,16 @@
+User types in a song →
+App checks if token exists →
+   ↳ No token → Start Spotify login (PKCE) →
+                Spotify redirects back with code →
+                App exchanges code for token →
+                Stores token in localStorage
+   ↳ Yes token → Search Spotify with token
+
+User sees results →
+User adds songs to playlist →
+User names playlist →
+User clicks "Save to Spotify" →
+App:
+   - Gets user's profile
+   - Creates a new playlist
+   - Adds tracks by their URIs
