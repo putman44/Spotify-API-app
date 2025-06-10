@@ -29,7 +29,8 @@ export async function spotifyAuth() {
   const clientId = "9aca5eb2ded04c25ba99b94528eb7549";
   const redirectUri = "http://127.0.0.1:5173"; // <-- Make sure this matches your Spotify app settings
 
-  const scope = "user-read-private user-read-email";
+  const scope =
+    "user-read-private user-read-email playlist-modify-private playlist-read-private playlist-modify-public";
   const authUrl = new URL("https://accounts.spotify.com/authorize");
 
   window.localStorage.setItem("code_verifier", codeVerifier);

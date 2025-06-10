@@ -1,6 +1,10 @@
 import { useState } from "react";
 
-export default function Playlist({ removeTrackFromPlaylist, playlist }) {
+export default function Playlist({
+  removeTrackFromPlaylist,
+  playlist,
+  handleSavePlaylist,
+}) {
   const [playlistName, setPlaylistName] = useState("");
 
   const handlePlaylistName = (event) => {
@@ -31,7 +35,9 @@ export default function Playlist({ removeTrackFromPlaylist, playlist }) {
               </li>
             ))}
           </ul>
-          <button>Save to Spotify</button>
+          <button onClick={() => handleSavePlaylist(playlistName)}>
+            Save to Spotify
+          </button>
         </div>
       ) : (
         <p>Your playlist is empty</p>

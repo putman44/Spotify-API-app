@@ -3,7 +3,12 @@ import "./App.css";
 import SearchBar from "./components/SearchBar";
 import SearchResults from "./components/SearchResults";
 import Playlist from "./components/Playlist";
-import { searchSpotify } from "./utils/spofityApi";
+import {
+  getCurrentUser,
+  searchSpotify,
+  createPlaylist,
+  addTracksToPlaylist,
+} from "./utils/spofityApi";
 import { spotifyAuth, getTokenFromCode } from "./utils/spotifyAuth";
 
 function App() {
@@ -40,7 +45,6 @@ function App() {
 
     const results = await searchSpotify(term, token);
     setSearchResults(results);
-    console.log("Search results:", results);
   };
 
   const handleAddToPlaylist = (trackId) => {
@@ -54,6 +58,35 @@ function App() {
     setPlaylist(playlist.filter((item) => item.id !== trackId));
   };
 
+  const handleSavePlaylist = async (playlistName) => {
+    const accessToken = localStorage.getItem("access_token");
+    if (!accessToken) {
+      alert("You must be logged in with Spotify first.");
+      return;
+    }
+
+    try {
+      // Step 1: Get current user's Spotify ID
+      const user = await getCurrentUser(accessToken);
+
+      // Step 2: Create the playlist
+      const newPlaylist = await createPlaylist(
+        user.id,
+        playlistName,
+        accessToken
+      );
+
+      // Step 3: Add tracks to the playlist
+      const uris = playlist.map((track) => track.uri); // Make sure `track.uri` exists
+      await addTracksToPlaylist(newPlaylist.id, uris, accessToken);
+
+      alert("Playlist saved to Spotify!");
+    } catch (err) {
+      console.error("Failed to save playlist:", err);
+      alert("Failed to save playlist. Check console for details.");
+    }
+  };
+
   return (
     <div className="App">
       <SearchBar handleSearch={handleSearch} />
@@ -63,6 +96,7 @@ function App() {
           filteredResults={searchResults}
         />
         <Playlist
+          handleSavePlaylist={handleSavePlaylist}
           removeTrackFromPlaylist={removeTrackFromPlaylist}
           playlist={playlist}
         />
