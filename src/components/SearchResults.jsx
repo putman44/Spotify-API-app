@@ -1,15 +1,19 @@
+import styles from "./SearchResults.module.css";
+
 export default function SearchResults({
   handleAddToPlaylist,
   filteredResults,
 }) {
   return (
-    <div className="search-results">
+    <div className={styles.searchResults}>
       <h2>Search Results</h2>
       {filteredResults.length > 0 ? (
-        <ul>
+        <ul className={styles.resultsList}>
           {filteredResults.map((track) => (
-            <li key={track.id}>
-              <strong>{track.name}</strong> by {track.artist} ({track.album})
+            <div key={track.id} className={styles.track}>
+              <li>
+                <strong>{track.name}</strong> by {track.artist} ({track.album})
+              </li>
               <button
                 onClick={() => {
                   handleAddToPlaylist(track.id);
@@ -17,7 +21,7 @@ export default function SearchResults({
               >
                 +
               </button>
-            </li>
+            </div>
           ))}
         </ul>
       ) : (

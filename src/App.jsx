@@ -9,7 +9,11 @@ import {
   createPlaylist,
   addTracksToPlaylist,
 } from "./utils/spofityApi";
-import { spotifyAuth, getTokenFromCode } from "./utils/spotifyAuth";
+import {
+  spotifyAuth,
+  getTokenFromCode,
+  getAccessToken,
+} from "./utils/spotifyAuth";
 
 // Main App component for the Spotify Playlist app
 function App() {
@@ -28,14 +32,16 @@ function App() {
     if (code && !token) {
       // If redirected from Spotify with a code, exchange it for a token
       getTokenFromCode().then(() => {
-        const accessToken = localStorage.getItem("access_token");
-        setToken(accessToken);
-        // Clean the URL so code param disappears
-        window.history.replaceState({}, document.title, "/");
+        const accessToken = getAccessToken();
+        if (accessToken) {
+          setToken(accessToken);
+          // Clean the URL so code param disappears
+          window.history.replaceState({}, document.title, "/");
+        }
       });
     } else {
       // If already authenticated, get token from localStorage
-      const accessToken = localStorage.getItem("access_token");
+      const accessToken = getAccessToken();
       if (accessToken) {
         setToken(accessToken);
       }
@@ -94,11 +100,12 @@ function App() {
 
   // Save the playlist to the user's Spotify account
   const handleSavePlaylist = async (playlistName) => {
-    const accessToken = localStorage.getItem("access_token");
+    const accessToken = getAccessToken();
     if (!accessToken) {
       alert("You must be logged in with Spotify first.");
       return;
     }
+
     try {
       // Step 1: Get current user's Spotify ID
       const user = await getCurrentUser(accessToken);
@@ -120,6 +127,7 @@ function App() {
 
   return (
     <div className="App">
+      <h1>Create Your Spotify Playlist</h1>
       {/* Search bar for user input */}
       <SearchBar handleSearch={handleSearch} />
       <main>

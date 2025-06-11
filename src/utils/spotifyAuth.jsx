@@ -1,13 +1,16 @@
 // src/utils/spotifyAuth.jsx
 
-// Your Spotify app's client ID
 const clientId = "9aca5eb2ded04c25ba99b94528eb7549";
-// The redirect URI registered in your Spotify app settings
-const redirectUri = "http://127.0.0.1:5173"; // <-- Make sure this matches your Spotify app settings
+const redirectUri = "http://127.0.0.1:5173";
 
-// Function to start the Spotify authentication flow
+// Check if token is expired
+const isTokenExpired = () => {
+  const expiration = localStorage.getItem("token_expiration");
+  return !expiration || new Date().getTime() > parseInt(expiration);
+};
+
+// Start the Spotify authentication flow
 export async function spotifyAuth() {
-  // Helper to generate a random string for PKCE code verifier
   const generateRandomString = (length) => {
     const possible =
       "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -15,17 +18,12 @@ export async function spotifyAuth() {
     return values.reduce((acc, x) => acc + possible[x % possible.length], "");
   };
 
-  // Generate a code verifier for PKCE
-  const codeVerifier = generateRandomString(64);
-
-  // Helper to hash the code verifier using SHA-256
   const sha256 = async (plain) => {
     const encoder = new TextEncoder();
     const data = encoder.encode(plain);
     return window.crypto.subtle.digest("SHA-256", data);
   };
 
-  // Helper to base64-url encode the hash
   const base64encode = (input) => {
     return btoa(String.fromCharCode(...new Uint8Array(input)))
       .replace(/=/g, "")
@@ -33,25 +31,22 @@ export async function spotifyAuth() {
       .replace(/\//g, "_");
   };
 
-  // Hash the code verifier and encode it for the code challenge
+  const codeVerifier = generateRandomString(64);
   const hashed = await sha256(codeVerifier);
   const codeChallenge = base64encode(hashed);
 
-  // Your Spotify app's client ID
-  const clientId = "9aca5eb2ded04c25ba99b94528eb7549";
-  // The redirect URI registered in your Spotify app settings
-  const redirectUri = "http://127.0.0.1:5173"; // <-- Make sure this matches your Spotify app settings
+  const scope = [
+    "user-read-private",
+    "user-read-email",
+    "playlist-modify-private",
+    "playlist-read-private",
+    "playlist-modify-public",
+  ].join(" ");
 
-  // The scopes your app is requesting
-  const scope =
-    "user-read-private user-read-email playlist-modify-private playlist-read-private playlist-modify-public";
-  // The Spotify authorization endpoint
   const authUrl = new URL("https://accounts.spotify.com/authorize");
 
-  // Store the code verifier in localStorage for later use
-  window.localStorage.setItem("code_verifier", codeVerifier);
+  localStorage.setItem("code_verifier", codeVerifier);
 
-  // Build the authorization request parameters
   const params = {
     response_type: "code",
     client_id: clientId,
@@ -61,31 +56,22 @@ export async function spotifyAuth() {
     redirect_uri: redirectUri,
   };
 
-  // Set the search params on the auth URL
   authUrl.search = new URLSearchParams(params).toString();
-  // Redirect the user to the Spotify login/authorization page
   window.location.href = authUrl.toString();
 }
 
-// Function to exchange the authorization code for an access token
-// Call this after redirect, if code is present in URL
+// Exchange authorization code for access token
 export async function getTokenFromCode() {
-  // Parse the code from the URL query string
   const urlParams = new URLSearchParams(window.location.search);
-  let code = urlParams.get("code");
-  if (!code) return; // If no code, do nothing
+  const code = urlParams.get("code");
+  if (!code) return;
 
-  // Retrieve the code verifier from localStorage
   const codeVerifier = localStorage.getItem("code_verifier");
-
-  // Spotify's token endpoint
   const url = "https://accounts.spotify.com/api/token";
-  // Build the POST request payload
+
   const payload = {
     method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: new URLSearchParams({
       client_id: clientId,
       grant_type: "authorization_code",
@@ -95,15 +81,35 @@ export async function getTokenFromCode() {
     }),
   };
 
-  // Send the POST request to exchange code for access token
   const body = await fetch(url, payload);
   const response = await body.json();
 
-  // If successful, store the access token in localStorage
   if (response.access_token) {
+    const expiresInMs = response.expires_in * 1000;
+    const expirationTime = new Date().getTime() + expiresInMs;
     localStorage.setItem("access_token", response.access_token);
+    localStorage.setItem("token_expiration", expirationTime);
+
+    // Clean up URL
+    window.history.replaceState({}, document.title, "/");
   } else {
-    // Log error if token exchange fails
     console.error("Failed to get access token:", response);
   }
+}
+
+// Get the current access token, or restart auth if expired
+export function getAccessToken() {
+  if (isTokenExpired()) {
+    spotifyAuth();
+    return null;
+  }
+  return localStorage.getItem("access_token");
+}
+
+// Clear all auth data
+export function clearAuthData() {
+  localStorage.removeItem("access_token");
+  localStorage.removeItem("code_verifier");
+  localStorage.removeItem("token_expiration");
+  window.location.href = "/";
 }

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import styles from "./Playlist.module.css"; // Assuming you have a CSS module for styles
 
 export default function Playlist({
   removeTrackFromPlaylist,
@@ -14,18 +15,23 @@ export default function Playlist({
   return (
     <div className="playlist">
       <input
+        className={styles.playlistName} // Assuming you have a CSS module for styles
         required
         value={playlistName}
         onChange={handlePlaylistName}
         type="text"
         placeholder="Playlist Name"
-      ></input>
+      />
+
       {playlist.length > 0 ? (
         <div>
-          <ul>
+          <ul className={styles.playlistItems}>
             {playlist.map((track) => (
-              <li key={track.id}>
-                <strong>{track.name}</strong> by {track.artist} ({track.album})
+              <div className={styles.playlistItem} key={track.id}>
+                <li>
+                  <strong>{track.name}</strong> by {track.artist} ({track.album}
+                  )
+                </li>
                 <button
                   onClick={() => {
                     removeTrackFromPlaylist(track.id);
@@ -33,7 +39,7 @@ export default function Playlist({
                 >
                   -
                 </button>
-              </li>
+              </div>
             ))}
           </ul>
           <button
