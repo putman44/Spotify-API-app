@@ -12,7 +12,12 @@ export default function SearchResults({
           {filteredResults.map((track) => (
             <div key={track.id} className={styles.track}>
               <li>
-                <strong>{track.name}</strong> by {track.artist} ({track.album})
+                <p>
+                  <strong>{track.name}</strong>
+                </p>
+                <p>
+                  {track.artist} | {track.album}
+                </p>
               </li>
               <button
                 onClick={() => {

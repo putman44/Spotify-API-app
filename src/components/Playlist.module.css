@@ -32,6 +32,7 @@
 
 .playlistItems li {
   width: 90%;
+  text-align: left;
   overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 3;

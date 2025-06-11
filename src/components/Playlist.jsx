@@ -29,8 +29,12 @@ export default function Playlist({
             {playlist.map((track) => (
               <div className={styles.playlistItem} key={track.id}>
                 <li>
-                  <strong>{track.name}</strong> by {track.artist} ({track.album}
-                  )
+                  <p>
+                    <strong>{track.name}</strong>
+                  </p>
+                  <p>
+                    {track.artist} | {track.album}
+                  </p>
                 </li>
                 <button
                   onClick={() => {
