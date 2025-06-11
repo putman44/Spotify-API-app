@@ -50,21 +50,46 @@ function App() {
       return;
     }
     // Search Spotify for tracks
-    const results = await searchSpotify(term, token);
-    setSearchResults(results);
+    try {
+      const results = await searchSpotify(term, token);
+      const filteredResults = results.filter(
+        (track) => !playlist.some((item) => item.id === track.id)
+      );
+      setSearchResults(filteredResults);
+    } catch (error) {
+      console.error("Error searching Spotify:", error);
+    }
   };
 
   // Add a track to the playlist by ID
   const handleAddToPlaylist = (trackId) => {
-    const track = searchResults.find((item) => item.id === trackId);
-    if (track && !playlist.some((item) => item.id === trackId)) {
-      setPlaylist([...playlist, track]);
-    }
+    const currentTrackId = searchResults.find((item) => item.id === trackId);
+    setPlaylist((prevPlaylist) => {
+      if (!prevPlaylist.some((track) => track.id === currentTrackId.id)) {
+        return [...prevPlaylist, currentTrackId];
+      }
+      return prevPlaylist; // Avoid duplicates
+    });
+    setSearchResults((prevResults) =>
+      prevResults.filter((track) => track.id !== currentTrackId.id)
+    );
   };
 
   // Remove a track from the playlist by ID
   const removeTrackFromPlaylist = (trackId) => {
     setPlaylist(playlist.filter((item) => item.id !== trackId));
+    // Add the removed track back to search results
+    setSearchResults((prevResults) => {
+      const removedTrack = playlist.find((track) => track.id === trackId);
+      // If the track was found in the playlist, add it back to search results
+      if (removedTrack) {
+        // Ensure the track is added back to search results without duplicates
+        return [...prevResults, removedTrack].sort((a, b) =>
+          a.name.localeCompare(b.name)
+        );
+      }
+      return prevResults;
+    });
   };
 
   // Save the playlist to the user's Spotify account

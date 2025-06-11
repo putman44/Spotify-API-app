@@ -1,5 +1,10 @@
 // src/utils/spotifyAuth.jsx
 
+// Your Spotify app's client ID
+const clientId = "9aca5eb2ded04c25ba99b94528eb7549";
+// The redirect URI registered in your Spotify app settings
+const redirectUri = "http://127.0.0.1:5173"; // <-- Make sure this matches your Spotify app settings
+
 // Function to start the Spotify authentication flow
 export async function spotifyAuth() {
   // Helper to generate a random string for PKCE code verifier
@@ -35,7 +40,7 @@ export async function spotifyAuth() {
   // Your Spotify app's client ID
   const clientId = "9aca5eb2ded04c25ba99b94528eb7549";
   // The redirect URI registered in your Spotify app settings
-  const redirectUri = "http://localhost:5173"; // <-- Make sure this matches your Spotify app settings
+  const redirectUri = "http://127.0.0.1:5173"; // <-- Make sure this matches your Spotify app settings
 
   // The scopes your app is requesting
   const scope =
@@ -70,10 +75,6 @@ export async function getTokenFromCode() {
   let code = urlParams.get("code");
   if (!code) return; // If no code, do nothing
 
-  // Your Spotify app's client ID
-  const clientId = "9aca5eb2ded04c25ba99b94528eb7549";
-  // The redirect URI registered in your Spotify app settings
-  const redirectUri = "http://localhost:5173"; // <-- Must match above
   // Retrieve the code verifier from localStorage
   const codeVerifier = localStorage.getItem("code_verifier");
 

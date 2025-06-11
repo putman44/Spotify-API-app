@@ -14,6 +14,7 @@ export default function Playlist({
   return (
     <div className="playlist">
       <input
+        required
         value={playlistName}
         onChange={handlePlaylistName}
         type="text"
@@ -35,7 +36,10 @@ export default function Playlist({
               </li>
             ))}
           </ul>
-          <button onClick={() => handleSavePlaylist(playlistName)}>
+          <button
+            disabled={!playlistName}
+            onClick={() => handleSavePlaylist(playlistName)}
+          >
             Save to Spotify
           </button>
         </div>
