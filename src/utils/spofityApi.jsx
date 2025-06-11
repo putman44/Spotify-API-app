@@ -12,7 +12,26 @@ export const getCurrentUser = async (accessToken) => {
     throw new Error("Failed to fetch user data");
   }
 
-  return response.json();
+  const data = await response.json();
+  return data;
+};
+
+export const getUserPlaylists = async (userId, accessToken) => {
+  const response = await fetch(
+    `https://api.spotify.com/v1/users/${userId}/playlists`,
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch user playlists");
+  }
+
+  const data = await response.json();
+  return data; // Return the list of playlists
 };
 
 // Create a new playlist for the user

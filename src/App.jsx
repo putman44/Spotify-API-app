@@ -8,12 +8,14 @@ import {
   searchSpotify,
   createPlaylist,
   addTracksToPlaylist,
+  getUserPlaylists,
 } from "./utils/spofityApi";
 import {
   spotifyAuth,
   getTokenFromCode,
   getAccessToken,
 } from "./utils/spotifyAuth";
+import { PlaylistList } from "./components/PlaylistList";
 
 // Main App component for the Spotify Playlist app
 function App() {
@@ -23,6 +25,8 @@ function App() {
   const [playlist, setPlaylist] = useState([]);
   // State for the Spotify access token
   const [token, setToken] = useState(null);
+  // State for the list of playlists
+  const [playlistList, setPlaylistList] = useState([]);
 
   // On app load, check if code is present in URL and get token if needed
   useEffect(() => {
@@ -125,11 +129,32 @@ function App() {
     }
   };
 
+  useEffect(() => {
+    const fetchUserPlaylists = async () => {
+      const accessToken = getAccessToken();
+      if (!accessToken) {
+        console.error("No access token found");
+        return;
+      }
+      try {
+        const user = await getCurrentUser(accessToken);
+        const playlists = await getUserPlaylists(user.id, accessToken);
+        setPlaylistList(playlists.items);
+      } catch (error) {
+        console.error("Error fetching user playlists:", error);
+      }
+    };
+    fetchUserPlaylists();
+  }, []);
+
   return (
     <div className="App">
       <h1>Create Your Spotify Playlist</h1>
       {/* Search bar for user input */}
       <SearchBar handleSearch={handleSearch} />
+      {/* Display user's playlists if needed */}
+      <PlaylistList playlistList={playlistList} />
+
       <main>
         {/* Search results list */}
         <SearchResults

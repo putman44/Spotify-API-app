@@ -2,6 +2,8 @@
   padding: 0.5rem;
   background-color: #0c6291;
   border-radius: 20px;
+  height: 600px;
+  overflow-y: auto;
 }
 
 .resultsList {

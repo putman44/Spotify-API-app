@@ -54,7 +54,7 @@ export default function Playlist({
           </button>
         </div>
       ) : (
-        <p>Your playlist is empty</p>
+        <p style={{ margin: 0 }}>Your playlist is empty</p>
       )}
     </div>
   );
