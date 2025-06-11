@@ -19,6 +19,8 @@ import { PlaylistList } from "./components/PlaylistList";
 
 // Main App component for the Spotify Playlist app
 function App() {
+  // State to manage loading state
+  const [loading, setLoading] = useState(true);
   // State for search results from Spotify
   const [searchResults, setSearchResults] = useState([]);
   // State for the user's playlist (array of tracks)
@@ -33,24 +35,28 @@ function App() {
     const urlParams = new URLSearchParams(window.location.search);
     const code = urlParams.get("code");
 
-    if (code && !token) {
-      // If redirected from Spotify with a code, exchange it for a token
+    const existingToken = getAccessToken();
+
+    if (existingToken) {
+      setToken(existingToken);
+      setLoading(false);
+      return;
+    }
+
+    if (code) {
       getTokenFromCode().then(() => {
-        const accessToken = getAccessToken();
-        if (accessToken) {
-          setToken(accessToken);
-          // Clean the URL so code param disappears
+        const newToken = getAccessToken();
+        if (newToken) {
+          setToken(newToken);
           window.history.replaceState({}, document.title, "/");
         }
+        setLoading(false);
       });
     } else {
-      // If already authenticated, get token from localStorage
-      const accessToken = getAccessToken();
-      if (accessToken) {
-        setToken(accessToken);
-      }
+      // ✅ Here's where you should decide to login
+      spotifyAuth(); // ⬅️ Only now should you start login
     }
-  }, [token]);
+  }, []);
 
   // Handle search bar submission
   const handleSearch = async (term) => {
@@ -130,12 +136,15 @@ function App() {
   };
 
   useEffect(() => {
+    if (loading) return; // Wait for token check to complete
+
     const fetchUserPlaylists = async () => {
       const accessToken = getAccessToken();
       if (!accessToken) {
         console.error("No access token found");
         return;
       }
+
       try {
         const user = await getCurrentUser(accessToken);
         const playlists = await getUserPlaylists(user.id, accessToken);
@@ -144,8 +153,9 @@ function App() {
         console.error("Error fetching user playlists:", error);
       }
     };
+
     fetchUserPlaylists();
-  }, []);
+  }, [loading]); // Depend on `loading`
 
   return (
     <div className="App">

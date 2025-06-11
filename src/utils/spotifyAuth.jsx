@@ -32,6 +32,7 @@ export async function spotifyAuth() {
   };
 
   const codeVerifier = generateRandomString(64);
+  localStorage.setItem("code_verifier", codeVerifier);
   const hashed = await sha256(codeVerifier);
   const codeChallenge = base64encode(hashed);
 
@@ -44,8 +45,6 @@ export async function spotifyAuth() {
   ].join(" ");
 
   const authUrl = new URL("https://accounts.spotify.com/authorize");
-
-  localStorage.setItem("code_verifier", codeVerifier);
 
   const params = {
     response_type: "code",
@@ -100,7 +99,6 @@ export async function getTokenFromCode() {
 // Get the current access token, or restart auth if expired
 export function getAccessToken() {
   if (isTokenExpired()) {
-    spotifyAuth();
     return null;
   }
   return localStorage.getItem("access_token");
