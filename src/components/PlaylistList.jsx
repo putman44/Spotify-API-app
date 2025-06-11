@@ -5,7 +5,6 @@ export const PlaylistList = ({ playlistList }) => {
     <div className={styles.playlistListContainer}>
       {playlistList.map((item) => (
         <div className={styles.playlistCard} key={item.id}>
-          {/* Only show the playlist image and title */}
           {item.images && item.images.length > 0 && (
             <img src={item.images[0].url} alt={item.name} />
           )}

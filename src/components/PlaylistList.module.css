@@ -58,5 +58,4 @@
   line-clamp: 2;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-height: 2.6em; /* ~2 lines */
 }
