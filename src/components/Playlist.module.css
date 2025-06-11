@@ -12,16 +12,18 @@
   border: none;
   background: transparent;
   text-align: center;
+  color: white;
 }
-.searchResults {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+.playlistContainer {
+  padding: 0.5rem;
+  background-color: #0c6291;
+  border-radius: 20px;
 }
 
 .playlistItems {
   list-style: none;
   padding: 0;
+  margin-top: 0;
 }
 
 .playlistItems p {

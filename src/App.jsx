@@ -50,7 +50,7 @@ function App() {
 
   // Handle search bar submission
   const handleSearch = async (term) => {
-    if (!token) {
+    if (!token || token === "null") {
       // No token, start login flow
       spotifyAuth();
       return;

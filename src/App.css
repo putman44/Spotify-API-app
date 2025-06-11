@@ -15,5 +15,6 @@
 main {
   width: 100%;
   display: grid;
-  grid-template-columns: 50% 50%;
+  grid-template-columns: 45% 45%;
+  justify-content: space-evenly;
 }

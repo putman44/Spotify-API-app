@@ -13,9 +13,9 @@ export default function Playlist({
   };
 
   return (
-    <div className="playlist">
+    <div className={styles.playlistContainer}>
       <input
-        className={styles.playlistName} // Assuming you have a CSS module for styles
+        className={styles.playlistName}
         required
         value={playlistName}
         onChange={handlePlaylistName}
