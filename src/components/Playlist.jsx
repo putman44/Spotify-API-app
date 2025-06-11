@@ -46,7 +46,7 @@ export default function Playlist({
             disabled={!playlistName}
             onClick={() => handleSavePlaylist(playlistName)}
           >
-            Save to Spotify
+            {playlistName === "" ? "Enter a Playlist Name" : "Save to Spotify"}
           </button>
         </div>
       ) : (
