@@ -1,17 +1,16 @@
 .playlistListContainer {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 24px;
-  width: 100vw;
-  max-width: 100vw;
+  gap: 12px;
+  width: 80%;
   margin: 0;
   margin-bottom: 20px;
-  padding: 32px 16px;
+  padding: 16px 16px;
   box-sizing: border-box;
   overflow-x: auto;
   overflow-y: auto;
   grid-auto-rows: 1fr;
-  max-height: calc(2 * 110px + 24px); /* 2 rows of cards + gap */
+  max-height: calc(2 * 75px + 24px); /* 2 rows of cards + gap */
 }
 
 .playlistCard {
