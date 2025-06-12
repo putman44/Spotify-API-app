@@ -1,5 +1,3 @@
-// src/utils/spotifyAuth.jsx
-
 const clientId = "9aca5eb2ded04c25ba99b94528eb7549";
 const redirectUri = "http://127.0.0.1:5173";
 

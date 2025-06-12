@@ -64,6 +64,28 @@ function App() {
     }
   }, []);
 
+  useEffect(() => {
+    if (loading) return; // Wait for token check to complete
+
+    const fetchUserPlaylists = async () => {
+      const accessToken = getAccessToken();
+      if (!accessToken) {
+        console.error("No access token found");
+        return;
+      }
+
+      try {
+        const user = await getCurrentUser(accessToken);
+        const playlists = await getUserPlaylists(user.id, accessToken);
+        setPlaylistList(playlists.items);
+      } catch (error) {
+        console.error("Error fetching user playlists:", error);
+      }
+    };
+
+    fetchUserPlaylists();
+  }, [loading]); // Depend on `loading`
+
   // Handle search bar submission
   const handleSearch = async (term) => {
     if (!token || token === "null") {
@@ -192,28 +214,6 @@ function App() {
       setShowModal(true);
     }
   };
-
-  useEffect(() => {
-    if (loading) return; // Wait for token check to complete
-
-    const fetchUserPlaylists = async () => {
-      const accessToken = getAccessToken();
-      if (!accessToken) {
-        console.error("No access token found");
-        return;
-      }
-
-      try {
-        const user = await getCurrentUser(accessToken);
-        const playlists = await getUserPlaylists(user.id, accessToken);
-        setPlaylistList(playlists.items);
-      } catch (error) {
-        console.error("Error fetching user playlists:", error);
-      }
-    };
-
-    fetchUserPlaylists();
-  }, [loading]); // Depend on `loading`
 
   const handlePlaylistClick = async (playlistId) => {
     const selectedPlaylist = playlistList.find(

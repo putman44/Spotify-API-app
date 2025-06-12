@@ -1,5 +1,3 @@
-// src/utils/spofityApi.jsx
-
 // Get the current user's Spotify profile using the access token
 export const getCurrentUser = async (accessToken) => {
   const response = await fetch("https://api.spotify.com/v1/me", {

@@ -38,6 +38,7 @@
   overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 3;
+  line-clamp: 3;
   -webkit-box-orient: vertical;
 }
 
@@ -51,4 +52,8 @@
   align-items: center;
   padding: 0.5rem;
   border-bottom: 1px solid #ccc;
+}
+
+.button {
+  margin-bottom: 15px;
 }

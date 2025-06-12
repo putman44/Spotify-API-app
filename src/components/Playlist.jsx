@@ -22,6 +22,7 @@ export default function Playlist({
       {playlist.length > 0 ? (
         <div>
           <button
+            className={styles.button}
             disabled={!playlistName}
             onClick={() => handleSavePlaylist(playlistName)}
           >
