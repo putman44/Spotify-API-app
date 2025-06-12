@@ -244,10 +244,9 @@ function App() {
           <button onClick={spotifyAuth}>Log in with Spotify</button>
         ) : (
           <>
-            {/* ...the rest of your app as before... */}
             <SearchBar handleSearch={handleSearch} />
             {loading ? (
-              <div>loading...</div>
+              <div style={{ marginBottom: "20px" }}>loading...</div>
             ) : (
               <PlaylistList
                 handlePlaylistClick={handlePlaylistClick}
