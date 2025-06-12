@@ -106,3 +106,28 @@ export const addTracksToPlaylist = async (playlistId, uris, accessToken) => {
 
   return response.json();
 };
+
+// Get tracks from a specific playlist by playlist ID
+export const getPlaylistTracks = async (playlistId, accessToken) => {
+  const response = await fetch(
+    `https://api.spotify.com/v1/playlists/${playlistId}/tracks`,
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch playlist tracks");
+  }
+
+  const data = await response.json();
+  return data.items.map((item) => ({
+    id: item.track.id,
+    name: item.track.name,
+    artist: item.track.artists[0].name,
+    album: item.track.album.name,
+    uri: item.track.uri,
+  }));
+};

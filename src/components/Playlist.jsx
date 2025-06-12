@@ -5,20 +5,16 @@ export default function Playlist({
   removeTrackFromPlaylist,
   playlist,
   handleSavePlaylist,
+  playlistName,
+  handlePlaylistName,
 }) {
-  const [playlistName, setPlaylistName] = useState("");
-
-  const handlePlaylistName = (event) => {
-    setPlaylistName(event.target.value);
-  };
-
   return (
     <div className={styles.playlistContainer}>
       <input
         className={styles.playlistName}
         required
         value={playlistName}
-        onChange={handlePlaylistName}
+        onChange={(event) => handlePlaylistName(event.target.value)}
         type="text"
         placeholder="Playlist Name"
       />

@@ -9,6 +9,7 @@ import {
   createPlaylist,
   addTracksToPlaylist,
   getUserPlaylists,
+  getPlaylistTracks,
 } from "./utils/spofityApi";
 import {
   spotifyAuth,
@@ -19,6 +20,8 @@ import { PlaylistList } from "./components/PlaylistList";
 
 // Main App component for the Spotify Playlist app
 function App() {
+  // State to manage the playlist name input
+  const [playlistName, setPlaylistName] = useState("");
   // State to manage loading state
   const [loading, setLoading] = useState(true);
   // State for search results from Spotify
@@ -157,13 +160,34 @@ function App() {
     fetchUserPlaylists();
   }, [loading]); // Depend on `loading`
 
+  const handlePlaylistClick = async (playlistId) => {
+    const selectedPlaylist = playlistList.find(
+      (playlist) => playlist.id === playlistId
+    );
+    setPlaylistName(selectedPlaylist.name);
+    const tracks = await getPlaylistTracks(selectedPlaylist.id, token);
+    console.log("Fetched tracks:", tracks); // Debugging line
+    setPlaylist(
+      tracks.map((item) => ({
+        id: item.id,
+        name: item.name,
+        artist: item.artists,
+        album: item.album,
+        uri: item.uri,
+      }))
+    );
+  };
+
   return (
     <div className="App">
       <h1>Create Your Spotify Playlist</h1>
       {/* Search bar for user input */}
       <SearchBar handleSearch={handleSearch} />
       {/* Display user's playlists if needed */}
-      <PlaylistList playlistList={playlistList} />
+      <PlaylistList
+        handlePlaylistClick={handlePlaylistClick}
+        playlistList={playlistList}
+      />
 
       <main>
         {/* Search results list */}
@@ -173,6 +197,8 @@ function App() {
         />
         {/* Playlist display and save button */}
         <Playlist
+          handlePlaylistName={(name) => setPlaylistName(name)}
+          playlistName={playlistName}
           handleSavePlaylist={handleSavePlaylist}
           removeTrackFromPlaylist={removeTrackFromPlaylist}
           playlist={playlist}
