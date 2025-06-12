@@ -36,7 +36,6 @@ function App() {
   const [token, setToken] = useState(null);
   // State for the list of user playlists
   const [playlistList, setPlaylistList] = useState([]);
-  console.log(playlist);
 
   // On app load, check if code is present in URL and get token if needed
   useEffect(() => {
@@ -247,10 +246,14 @@ function App() {
           <>
             {/* ...the rest of your app as before... */}
             <SearchBar handleSearch={handleSearch} />
-            <PlaylistList
-              handlePlaylistClick={handlePlaylistClick}
-              playlistList={playlistList}
-            />
+            {loading ? (
+              <div>loading...</div>
+            ) : (
+              <PlaylistList
+                handlePlaylistClick={handlePlaylistClick}
+                playlistList={playlistList}
+              />
+            )}
             <CreateNewPlaylist
               setPlaylistName={setPlaylistName}
               setPlaylist={setPlaylist}
