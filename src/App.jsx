@@ -17,9 +17,13 @@ import {
   getAccessToken,
 } from "./utils/spotifyAuth";
 import { PlaylistList } from "./components/PlaylistList";
+import { CreateNewPlaylist } from "./components/CreateNewPlaylist";
+import { Modal } from "./utils/Modal";
 
 // Main App component for the Spotify Playlist app
 function App() {
+  const [modalMessage, setModalMessage] = useState("");
+  const [showModal, setShowModal] = useState(false);
   // State to manage the playlist name input
   const [playlistName, setPlaylistName] = useState("");
   // State to manage loading state
@@ -32,6 +36,7 @@ function App() {
   const [token, setToken] = useState(null);
   // State for the list of user playlists
   const [playlistList, setPlaylistList] = useState([]);
+  console.log(playlist);
 
   // On app load, check if code is present in URL and get token if needed
   useEffect(() => {
@@ -56,8 +61,7 @@ function App() {
         setLoading(false);
       });
     } else {
-      // ✅ Here's where you should decide to login
-      spotifyAuth(); // ⬅️ Only now should you start login
+      setLoading(false);
     }
   }, []);
 
@@ -115,26 +119,78 @@ function App() {
   const handleSavePlaylist = async (playlistName) => {
     const accessToken = getAccessToken();
     if (!accessToken) {
-      alert("You must be logged in with Spotify first.");
+      setModalMessage("You must be logged in with Spotify first.");
+      setShowModal(true);
       return;
     }
 
     try {
       // Step 1: Get current user's Spotify ID
       const user = await getCurrentUser(accessToken);
-      // Step 2: Create the playlist
+
+      // Step 2: Check for existing playlist with the same name
+      const existingPlaylist = playlistList.find(
+        (playlist) =>
+          playlist.name.trim().toLowerCase() ===
+          playlistName.trim().toLowerCase()
+      );
+      const newTrackUris = playlist.map((track) => track.uri);
+
+      if (existingPlaylist) {
+        // Fetch tracks from the existing playlist
+        const existingTracks = await getPlaylistTracks(
+          existingPlaylist.id,
+          accessToken
+        );
+        const existingTrackUris = existingTracks.map((track) => track.uri);
+
+        // Use Set for O(1) lookup
+        const newTrackSet = new Set(newTrackUris);
+        const existingTrackSet = new Set(existingTrackUris);
+        const allTracksSame =
+          newTrackSet.size === existingTrackSet.size &&
+          [...newTrackSet].every((uri) => existingTrackSet.has(uri));
+
+        if (allTracksSame) {
+          setModalMessage(
+            "A playlist with this name and tracks already exists in your Spotify account."
+          );
+          setShowModal(true);
+          return;
+        } else {
+          // Find new tracks to add (those not already in the playlist)
+          const tracksToAdd = newTrackUris.filter(
+            (uri) => !existingTrackSet.has(uri)
+          );
+          if (tracksToAdd.length > 0) {
+            await addTracksToPlaylist(
+              existingPlaylist.id,
+              tracksToAdd,
+              accessToken
+            );
+            setModalMessage("Playlist updated with new tracks!");
+            setShowModal(true);
+          } else {
+            setModalMessage("No new tracks to add to the existing playlist.");
+            setShowModal(true);
+          }
+          return;
+        }
+      }
+
+      // Step 3: Create the playlist if it doesn't exist
       const newPlaylist = await createPlaylist(
         user.id,
         playlistName,
         accessToken
       );
-      // Step 3: Add tracks to the playlist
-      const uris = playlist.map((track) => track.uri); // Make sure `track.uri` exists
-      await addTracksToPlaylist(newPlaylist.id, uris, accessToken);
-      alert("Playlist saved to Spotify!");
+      await addTracksToPlaylist(newPlaylist.id, newTrackUris, accessToken);
+      setModalMessage("Playlist saved to Spotify!");
+      setShowModal(true);
     } catch (err) {
       console.error("Failed to save playlist:", err);
-      alert("Failed to save playlist. Check console for details.");
+      setModalMessage("Failed to save playlist. Check console for details.");
+      setShowModal(true);
     }
   };
 
@@ -179,32 +235,43 @@ function App() {
   };
 
   return (
-    <div className="App">
-      <h1>Create Your Spotify Playlist</h1>
-      {/* Search bar for user input */}
-      <SearchBar handleSearch={handleSearch} />
-      {/* Display user's playlists if needed */}
-      <PlaylistList
-        handlePlaylistClick={handlePlaylistClick}
-        playlistList={playlistList}
-      />
-
-      <main>
-        {/* Search results list */}
-        <SearchResults
-          handleAddToPlaylist={handleAddToPlaylist}
-          filteredResults={searchResults}
-        />
-        {/* Playlist display and save button */}
-        <Playlist
-          handlePlaylistName={(name) => setPlaylistName(name)}
-          playlistName={playlistName}
-          handleSavePlaylist={handleSavePlaylist}
-          removeTrackFromPlaylist={removeTrackFromPlaylist}
-          playlist={playlist}
-        />
-      </main>
-    </div>
+    <>
+      {showModal && (
+        <Modal setShowModal={setShowModal} modalMessage={modalMessage} />
+      )}
+      <div className="App">
+        <h1>Create Your Spotify Playlist</h1>
+        {!token && !loading ? (
+          <button onClick={spotifyAuth}>Log in with Spotify</button>
+        ) : (
+          <>
+            {/* ...the rest of your app as before... */}
+            <SearchBar handleSearch={handleSearch} />
+            <PlaylistList
+              handlePlaylistClick={handlePlaylistClick}
+              playlistList={playlistList}
+            />
+            <CreateNewPlaylist
+              setPlaylistName={setPlaylistName}
+              setPlaylist={setPlaylist}
+            />
+            <main>
+              <SearchResults
+                handleAddToPlaylist={handleAddToPlaylist}
+                filteredResults={searchResults}
+              />
+              <Playlist
+                handlePlaylistName={(name) => setPlaylistName(name)}
+                playlistName={playlistName}
+                handleSavePlaylist={handleSavePlaylist}
+                removeTrackFromPlaylist={removeTrackFromPlaylist}
+                playlist={playlist}
+              />
+            </main>
+          </>
+        )}
+      </div>
+    </>
   );
 }
 

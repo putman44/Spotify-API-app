@@ -21,6 +21,12 @@ export default function Playlist({
 
       {playlist.length > 0 ? (
         <div>
+          <button
+            disabled={!playlistName}
+            onClick={() => handleSavePlaylist(playlistName)}
+          >
+            {playlistName === "" ? "Enter a Playlist Name" : "Save to Spotify"}
+          </button>
           <ul className={styles.playlistItems}>
             {playlist.map((track) => (
               <div className={styles.playlistItem} key={track.id}>
@@ -42,12 +48,6 @@ export default function Playlist({
               </div>
             ))}
           </ul>
-          <button
-            disabled={!playlistName}
-            onClick={() => handleSavePlaylist(playlistName)}
-          >
-            {playlistName === "" ? "Enter a Playlist Name" : "Save to Spotify"}
-          </button>
         </div>
       ) : (
         <p style={{ margin: 0 }}>Your playlist is empty</p>
