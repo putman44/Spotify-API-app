@@ -30,7 +30,7 @@ function App() {
   const [playlist, setPlaylist] = useState([]);
   // State for the Spotify access token
   const [token, setToken] = useState(null);
-  // State for the list of playlists
+  // State for the list of user playlists
   const [playlistList, setPlaylistList] = useState([]);
 
   // On app load, check if code is present in URL and get token if needed
@@ -166,7 +166,7 @@ function App() {
     );
     setPlaylistName(selectedPlaylist.name);
     const tracks = await getPlaylistTracks(selectedPlaylist.id, token);
-    console.log("Fetched tracks:", tracks); // Debugging line
+
     setPlaylist(
       tracks.map((item) => ({
         id: item.id,
