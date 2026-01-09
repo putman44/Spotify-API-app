@@ -16,7 +16,7 @@
 }
 .playlistContainer {
   padding: 0.5rem;
-  background-color: #0c6291;
+  background-color: hsla(51 55 82);
   border-radius: 20px;
   height: 600px;
   overflow-y: auto;
@@ -50,10 +50,12 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 5px;
   padding: 0.5rem;
   border-bottom: 1px solid #ccc;
 }
 
 .button {
   margin-bottom: 15px;
+  color: white;
 }

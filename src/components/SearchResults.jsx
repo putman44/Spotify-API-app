@@ -3,6 +3,7 @@ import styles from "./SearchResults.module.css";
 export default function SearchResults({
   handleAddToPlaylist,
   filteredResults,
+  handlePlayTrack,
 }) {
   return (
     <div className={styles.searchResults}>
@@ -19,6 +20,7 @@ export default function SearchResults({
                   {track.artist} | {track.album}
                 </p>
               </li>
+              <button onClick={() => handlePlayTrack(track.id)}>▶︎</button>
               <button
                 onClick={() => {
                   handleAddToPlaylist(track.id);

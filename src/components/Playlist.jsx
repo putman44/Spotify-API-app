@@ -7,6 +7,7 @@ export default function Playlist({
   handleSavePlaylist,
   playlistName,
   handlePlaylistName,
+  handlePlayTrack,
 }) {
   return (
     <div className={styles.playlistContainer}>
@@ -39,6 +40,8 @@ export default function Playlist({
                     {track.artist} | {track.album}
                   </p>
                 </li>
+                <button onClick={() => handlePlayTrack(track.id)}>▶︎</button>
+
                 <button
                   onClick={() => {
                     removeTrackFromPlaylist(track.id);

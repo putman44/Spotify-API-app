@@ -7,11 +7,12 @@
   color: rgba(255, 255, 255, 0.87);
   background-size: 100% 100%;
   background-position: 0px 0px;
-  background-image: repeating-linear-gradient(36deg, #0267c1 7%, #d65108 93%);
+  background-image: repeating-linear-gradient(36deg, #003049 7%, #eae2b7 93%);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  color: #003049;
 }
 
 a {
@@ -43,7 +44,7 @@ button {
   font-size: 1em;
   font-weight: bold;
   font-family: inherit;
-  background-color: #efa00b;
+  background-color: #003049;
   cursor: pointer;
   transition: border-color 0.25s;
 }

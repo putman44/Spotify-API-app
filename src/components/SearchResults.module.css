@@ -1,6 +1,6 @@
 .searchResults {
   padding: 0.5rem;
-  background-color: #0c6291;
+  background-color: hsla(51 55 82);
   border-radius: 20px;
   height: 600px;
   overflow-y: auto;
@@ -32,6 +32,7 @@
 .track {
   display: flex;
   justify-content: space-between;
+  gap: 5px;
   align-items: center;
   padding: 0.5rem;
   border-bottom: 1px solid #ccc;

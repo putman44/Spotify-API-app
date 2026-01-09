@@ -19,6 +19,7 @@ import {
 import { PlaylistList } from "./components/PlaylistList";
 import { CreateNewPlaylist } from "./components/CreateNewPlaylist";
 import { Modal } from "./utils/Modal";
+import SpotifyPlayer from "./components/SpotifyPlayer";
 
 // Main App component for the Spotify Playlist app
 function App() {
@@ -36,6 +37,8 @@ function App() {
   const [token, setToken] = useState(null);
   // State for the list of user playlists
   const [playlistList, setPlaylistList] = useState([]);
+
+  const [currentTrackId, setCurrentTrackId] = useState(null);
 
   // On app load, check if code is present in URL and get token if needed
   useEffect(() => {
@@ -103,6 +106,11 @@ function App() {
     } catch (error) {
       console.error("Error searching Spotify:", error);
     }
+  };
+
+  // Play track in spotify player by ID
+  const handlePlayTrack = (trackId) => {
+    setCurrentTrackId(trackId);
   };
 
   // Add a track to the playlist by ID
@@ -238,6 +246,7 @@ function App() {
       {showModal && (
         <Modal setShowModal={setShowModal} modalMessage={modalMessage} />
       )}
+
       <div className="App">
         <h1>Create Your Spotify Playlist</h1>
         {!token && !loading ? (
@@ -258,17 +267,26 @@ function App() {
               setPlaylist={setPlaylist}
             />
             <main>
-              <SearchResults
-                handleAddToPlaylist={handleAddToPlaylist}
-                filteredResults={searchResults}
-              />
-              <Playlist
-                handlePlaylistName={(name) => setPlaylistName(name)}
-                playlistName={playlistName}
-                handleSavePlaylist={handleSavePlaylist}
-                removeTrackFromPlaylist={removeTrackFromPlaylist}
-                playlist={playlist}
-              />
+              {currentTrackId && (
+                <div style={{ margin: "20px 0" }}>
+                  <SpotifyPlayer spotifyId={currentTrackId} />
+                </div>
+              )}
+              <div id="search-playlist-results">
+                <SearchResults
+                  handleAddToPlaylist={handleAddToPlaylist}
+                  filteredResults={searchResults}
+                  handlePlayTrack={handlePlayTrack}
+                />
+                <Playlist
+                  handlePlaylistName={(name) => setPlaylistName(name)}
+                  playlistName={playlistName}
+                  handleSavePlaylist={handleSavePlaylist}
+                  removeTrackFromPlaylist={removeTrackFromPlaylist}
+                  playlist={playlist}
+                  handlePlayTrack={handlePlayTrack}
+                />
+              </div>
             </main>
           </>
         )}
