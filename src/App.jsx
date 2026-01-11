@@ -17,7 +17,6 @@ import {
   getAccessToken,
 } from "./utils/spotifyAuth";
 import { PlaylistList } from "./components/PlaylistList";
-import { CreateNewPlaylist } from "./components/CreateNewPlaylist";
 import { Modal } from "./utils/Modal";
 import SpotifyPlayer from "./components/SpotifyPlayer";
 
