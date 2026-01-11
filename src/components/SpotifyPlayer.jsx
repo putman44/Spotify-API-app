@@ -1,9 +1,7 @@
 import styles from "./SpotifyPlayer.module.css";
 
 function SpotifyPlayer({ type = "track", spotifyId }) {
-  if (!spotifyId) return null;
-
-  return (
+  return spotifyId ? (
     <iframe
       src={`https://open.spotify.com/embed/${type}/${spotifyId}`}
       width="100%"
@@ -13,6 +11,10 @@ function SpotifyPlayer({ type = "track", spotifyId }) {
       loading="lazy"
       style={{ borderRadius: "12px" }}
     />
+  ) : (
+    <div className={styles.playerPlaceholder}>
+      Select a track to start playing
+    </div>
   );
 }
 

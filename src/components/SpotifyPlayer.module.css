@@ -1,3 +1,17 @@
 iframe {
   width: 75%;
 }
+
+.playerPlaceholder {
+  width: 75%;
+  height: 80px;
+  margin: 0 auto;
+  background-color: #003049;
+  border-radius: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 0.9rem;
+  text-align: center;
+}

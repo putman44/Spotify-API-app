@@ -20,8 +20,9 @@ main {
 
 #search-playlist-results {
   display: grid;
-  grid-template-columns: 45% 45%;
-  justify-content: space-evenly;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 24px;
+  margin: 0 5%;
 }
 
 h1 {

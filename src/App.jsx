@@ -223,6 +223,12 @@ function App() {
     }
   };
 
+  const handleClearPlaylist = () => {
+    if (playlist.length === 0 && !playlistName) return;
+    setPlaylist([]);
+    setPlaylistName("");
+  };
+
   const handlePlaylistClick = async (playlistId) => {
     const selectedPlaylist = playlistList.find(
       (playlist) => playlist.id === playlistId
@@ -262,16 +268,12 @@ function App() {
                 playlistList={playlistList}
               />
             )}
-            <CreateNewPlaylist
-              setPlaylistName={setPlaylistName}
-              setPlaylist={setPlaylist}
-            />
+
             <main>
-              {currentTrackId && (
-                <div style={{ margin: "20px 0" }}>
-                  <SpotifyPlayer spotifyId={currentTrackId} />
-                </div>
-              )}
+              <div style={{ margin: "20px 0" }}>
+                <SpotifyPlayer spotifyId={currentTrackId} />
+              </div>
+
               <div id="search-playlist-results">
                 <SearchResults
                   handleAddToPlaylist={handleAddToPlaylist}
@@ -285,6 +287,7 @@ function App() {
                   removeTrackFromPlaylist={removeTrackFromPlaylist}
                   playlist={playlist}
                   handlePlayTrack={handlePlayTrack}
+                  handleClearPlaylist={handleClearPlaylist}
                 />
               </div>
             </main>

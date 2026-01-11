@@ -12,7 +12,7 @@
   border: none;
   background: transparent;
   text-align: center;
-  color: white;
+  color: #003049;
 }
 .playlistContainer {
   padding: 0.5rem;
@@ -20,6 +20,7 @@
   border-radius: 20px;
   height: 600px;
   overflow-y: auto;
+  scrollbar-gutter: stable;
 }
 
 .playlistItems {
@@ -36,10 +37,13 @@
   width: 90%;
   text-align: left;
   overflow: hidden;
+  min-height: calc(1.2em * 3); /* 3 lines */
   display: -webkit-box;
   -webkit-line-clamp: 3;
   line-clamp: 3;
   -webkit-box-orient: vertical;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .playlistItems button {
@@ -55,7 +59,47 @@
   border-bottom: 1px solid #ccc;
 }
 
+@media screen and (max-width: 600px) {
+  .playlistItem {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+  }
+}
+
 .button {
+  display: flex;
+  justify-content: center;
   margin-bottom: 15px;
   color: white;
+  width: 50%;
+  font-size: 0.75rem;
+}
+
+.buttonContainer {
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.trackButtons {
+  display: flex;
+  gap: 5px;
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.bounceArrow {
+  display: inline-block; /* needed for transform */
+  animation: bounce 1s infinite;
 }
