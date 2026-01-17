@@ -8,7 +8,6 @@ A web application to search, manage, and save Spotify playlists. Built with **Re
 
 - **Search Spotify Tracks:** Search songs by name, artist, or album.
 - **Add/Remove Tracks:** Add tracks from search results to your custom playlist.
-- **Multi-Select Tracks:** Select multiple tracks using **Shift+Click** and add them to your playlist in bulk.
 - **Play Tracks:** Preview tracks directly within the app.
 - **Create Spotify Playlists:** Save playlists to your Spotify account.
 - **Manage Existing Playlists:** Load and update your Spotify playlists.
